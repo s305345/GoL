@@ -40,6 +40,14 @@ public class Controller {
         gc.lineTo(theCanvas.getWidth(), y1);
         gc.stroke();
     }
-}
+
 
 }
+/*
+    public class cell(){
+        int x;
+        int y;
+
+*/
+    }
+
