@@ -31,7 +31,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Canvas fx:id="theCanvas" height="830.0" layoutX="550.0" layoutY="350.0" width="1300.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
+      <Canvas fx:id="theCanvas" layoutX="550.0" layoutY="350.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
       <ButtonBar layoutX="557.0" layoutY="866.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
         <buttons>
             <Slider layoutX="720.0" layoutY="18.0" min="1.0" minorTickCount="0" showTickMarks="true" snapToTicks="true" />
