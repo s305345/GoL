@@ -28,6 +28,8 @@ public class Controller {
 
     private GameLoop gameLoop;
 
+    private boolean currentMousePosState;
+
     private boolean isRunning = false;
 
     private Paint deadCellColor = Color.DARKSLATEGRAY;
@@ -45,17 +47,6 @@ public class Controller {
         gc = theCanvas.getGraphicsContext2D();
         initGrid();
 
-        theCanvas.onMouseClickedProperty();
-        theCanvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                int mousePosX = (int) event.getX() / 10;
-                int mousePosY = (int) event.getY() / 10;
-                currentGen.getCell(mousePosX, mousePosY).switchState();
-                drawCell(mousePosX, mousePosY);
-            }
-        });
-
         speed.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -67,6 +58,26 @@ public class Controller {
 
     }
 
+    @FXML
+    private void mouseClick(MouseEvent event) {
+        int mousePosX = (int) event.getX() / 10;
+        int mousePosY = (int) event.getY() / 10;
+        if (!(mousePosX < 0 || mousePosX > theCanvas.getWidth() / 10 - 1 || mousePosY < 0 || mousePosY > theCanvas.getHeight() / 10 - 1)) {
+            currentMousePosState = !currentGen.getCell(mousePosX, mousePosY).isAlive();
+            currentGen.getCell(mousePosX, mousePosY).setState(currentMousePosState);
+            drawCell(mousePosX, mousePosY);
+        }
+    }
+
+    @FXML
+    private void mouseDrag(MouseEvent event) {
+        int mousePosX = (int) event.getX() / 10;
+        int mousePosY = (int) event.getY() / 10;
+        if (!(mousePosX < 0 || mousePosX > theCanvas.getWidth() / 10 - 1 || mousePosY < 0 || mousePosY > theCanvas.getHeight() / 10 - 1)) {
+            currentGen.getCell(mousePosX, mousePosY).setState(currentMousePosState);
+            drawCell(mousePosX, mousePosY);
+        }
+    }
 
     @FXML
     private void reset() {

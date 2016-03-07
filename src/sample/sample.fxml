@@ -32,16 +32,16 @@
             </Menu>
         </menus>
     </MenuBar>
-    <Canvas fx:id="theCanvas" height="600.0" layoutX="550.0" layoutY="350.0" width="1000.0"
-            AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1.0"
-            AnchorPane.topAnchor="25.0"/>
+    <Canvas fx:id="theCanvas" height="600.0" layoutX="550.0" layoutY="350.0" onMouseDragged="#mouseDrag"
+            onMousePressed="#mouseClick" width="1000.0" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="0.0"
+            AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="25.0"/>
     <ButtonBar layoutX="557.0" layoutY="866.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0"
                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
         <buttons>
             <Slider layoutX="720.0" layoutY="18.0" min="1.0" minorTickCount="0" showTickMarks="true"
                     snapToTicks="true"/>
-            <Slider fx:id="speed" blockIncrement="0.0" majorTickUnit="9.8E7" max="5.0E8" min="1.0E7"
-                    minorTickCount="0" showTickMarks="true" snapToTicks="true"/>
+            <Slider fx:id="speed" blockIncrement="0.0" majorTickUnit="9.8E7" max="5.0E8" min="1.0E7" minorTickCount="0"
+                    showTickMarks="true" snapToTicks="true"/>
             <ToggleButton fx:id="play" mnemonicParsing="false" onAction="#play" text="Play/Pause"/>
             <Button fx:id="reset" layoutX="1235.0" layoutY="18.0" mnemonicParsing="false" onAction="#reset"
                     text="Refresh"/>
