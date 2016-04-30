@@ -134,26 +134,27 @@ public class Controller {
         int aliveCount = 0;
         int[] tempDead = new int[8];
         int deadCount = 0;
-        for (int row = 1; row <= 2; row++) {
-            for (int col = 1; col <= 9; col++) {
-                ObservableList<Node> children = rules.getChildren();
-                for (Node child : children) {
-                    if ((rules.getRowIndex(child) == null) || (rules.getColumnIndex(child) == null)) {
-                    } else if ((rules.getRowIndex(child) == row) && (rules.getColumnIndex(child) == col)) {
-                        CheckBox checkBox = (CheckBox) child;
-                        if (row == 1) {
-                            if (checkBox.isSelected()) {
-                                tempAlive[aliveCount] = Math.max(0, col - 1);
-                                aliveCount++;
-                            }
+        int row;
+        int col;
+        ObservableList<Node> children = rules.getChildren();
+        for (Node child : children) {
+            if ((rules.getRowIndex(child) == null) || (rules.getColumnIndex(child) == null)) {
+                // null is when row or col is like 0
+                continue; // to skip them as there is no checkBox there
+            }
+            row = rules.getRowIndex(child);
+            col = rules.getColumnIndex(child);
+            CheckBox checkBox = (CheckBox) child;
+            if (row == 1) { // alive is found on row 1
+                if (checkBox.isSelected()) {
+                    tempAlive[aliveCount] = col - 1;
+                    aliveCount++;
+                }
 
-                        } else {
-                            if (checkBox.isSelected()) {
-                                tempDead[deadCount] = Math.max(0, col - 1);
-                                deadCount++;
-                            }
-                        }
-                    }
+            } else { // dead is found on row 2
+                if (checkBox.isSelected()) {
+                    tempDead[deadCount] = col - 1;
+                    deadCount++;
                 }
             }
         }
@@ -164,6 +165,43 @@ public class Controller {
 
         rules.setVisible(false);
     }
+
+//    @FXML
+//    private void setRules() {
+//        int[] tempAlive = new int[8];
+//        int aliveCount = 0;
+//        int[] tempDead = new int[8];
+//        int deadCount = 0;
+//        for (int row = 1; row <= 2; row++) {
+//            for (int col = 1; col <= 9; col++) {
+//                ObservableList<Node> children = rules.getChildren();
+//                for (Node child : children) {
+//                    if ((rules.getRowIndex(child) == null) || (rules.getColumnIndex(child) == null)) {
+//                    } else if ((rules.getRowIndex(child) == row) && (rules.getColumnIndex(child) == col)) {
+//                        CheckBox checkBox = (CheckBox) child;
+//                        if (row == 1) {
+//                            if (checkBox.isSelected()) {
+//                                tempAlive[aliveCount] = Math.max(0, col - 1);
+//                                aliveCount++;
+//                            }
+//
+//                        } else {
+//                            if (checkBox.isSelected()) {
+//                                tempDead[deadCount] = Math.max(0, col - 1);
+//                                deadCount++;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        alive = new int[aliveCount];
+//        dead = new int[deadCount];
+//        arrayToArray(alive, tempAlive);
+//        arrayToArray(dead, tempDead);
+//
+//        rules.setVisible(false);
+//    }
 
     public int[] arrayToArray(int[] finalArray, int[] containsValues) {
         for (int i = 0; i < finalArray.length; i++) {
