@@ -81,10 +81,10 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         </rowConstraints>
                         <children>
-                            <Button maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#left" prefHeight="25.0" prefWidth="28.0" text="⇦" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
-                            <Button mnemonicParsing="false" onAction="#down" prefHeight="25.0" prefWidth="30.0" text="⇩" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
-                            <Button mnemonicParsing="false" onAction="#up" prefHeight="25.0" prefWidth="30.0" text="⇧" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM" />
-                            <Button mnemonicParsing="false" onAction="#right" prefHeight="25.0" prefWidth="28.0" text="⇨" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
+                            <Button  mnemonicParsing="false" onAction="#left" prefHeight="28.0" prefWidth="30.0" text="⇦" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
+                            <Button mnemonicParsing="false" onAction="#down" prefHeight="28.0" prefWidth="30.0" text="⇩" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
+                            <Button mnemonicParsing="false" onAction="#up" prefHeight="28.0" prefWidth="30.0" text="⇧" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM" />
+                            <Button mnemonicParsing="false" onAction="#right" prefHeight="28.0" prefWidth="30.0" text="⇨" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
                         </children>
                     </GridPane>
                     <CheckBox alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#safe" selected="true" text="Safe move" />
