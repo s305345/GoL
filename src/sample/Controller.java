@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -7,25 +9,40 @@ import javafx.fxml.FXML;
 import javafx.scene.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.ZoomEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.transform.Affine;
 import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class Controller {
     private static Controller theController;
 
     @FXML
     private Canvas theCanvas;
+    @FXML
+    private VBox left;
+    @FXML
+    private BorderPane window;
+    @FXML
+    private ButtonBar bot;
+    @FXML
+    private MenuBar top;
 
     @FXML
     private Slider speed;
@@ -34,15 +51,26 @@ public class Controller {
     private Slider moveDistance;
 
     @FXML
+    private Slider sizeValue;
+
+    @FXML
     private GridPane rules;
 
     private int[] alive = {2, 3};
-
     private int[] dead = {3};
 
     private int moveValue = 5;
+    private int cellSize = 10;
+    private double scrollAmount = 1;
+    private double lastPosX;
+    private double lastPosY;
+
+    private int rows;
+    private int columns;
 
     public boolean safe;
+
+    private Affine affine;
 
     public String direction;
 
@@ -51,6 +79,9 @@ public class Controller {
     private CellGrid currentGen;
 
     private GraphicsContext gc;
+
+    private boolean runHeight = false;
+    private boolean runWidth = false;
 
     private GameLoop gameLoop;
 
@@ -68,11 +99,20 @@ public class Controller {
     }
 
     public void initialize() {
+
+        rows = (int)theCanvas.getHeight()/cellSize;
+        columns = (int)theCanvas.getWidth()/cellSize;
+        lastPosX = 0;
+        lastPosY = 0;
+        currentGen = new CellGrid(columns,rows);
+
+        affine = new Affine();
+
         safe = true;
         theController = this;
         gameLoop = new GameLoop();
         gc = theCanvas.getGraphicsContext2D();
-        initGrid();
+
 
         speed.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -89,8 +129,44 @@ public class Controller {
         });
 
 
-        currentGen = new CellGrid((int) theCanvas.getWidth() / 10, (int) theCanvas.getHeight() / 10);
+        sizeValue.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                cellSize = newValue.intValue();
+                initGrid();
+                rows = (int)theCanvas.getHeight()/cellSize;
+                columns = (int)theCanvas.getWidth()/cellSize;
+                currentGen.editSize(columns,rows);
+                draw();
+            }
+        });
 
+        window.widthProperty().addListener( event -> {
+            if (!runWidth){
+                runWidth = true;
+            }else {
+                theCanvas.setWidth(window.getWidth() - left.getWidth());
+                columns = (int) theCanvas.getWidth() / cellSize;
+                currentGen.editSize(columns, rows);
+                initGrid();
+                draw();
+            }
+        });
+
+        window.heightProperty().addListener( event -> {
+            if (!runHeight){
+                runHeight = true;
+            }else {
+                theCanvas.setHeight(window.getHeight()-bot.getHeight()-top.getHeight());
+                rows = (int)theCanvas.getHeight()/cellSize;
+                currentGen.editSize(columns,rows);
+                initGrid();
+                draw();
+            }
+        });
+
+
+        initGrid();
     }
 
     /**
@@ -100,11 +176,15 @@ public class Controller {
      */
     @FXML
     private void mouseClick(MouseEvent event) {
-        int mousePosX = (int) event.getX() / 10;
-        int mousePosY = (int) event.getY() / 10;
-        if (!(mousePosX < 0 || mousePosX > theCanvas.getWidth() / 10 - 1 || mousePosY < 0 || mousePosY > theCanvas.getHeight() / 10 - 1)) {
-            currentMousePosState = !currentGen.getCell(mousePosX, mousePosY).isAlive();
-            currentGen.getCell(mousePosX, mousePosY).setState(currentMousePosState);
+        int mousePosX = (int) (event.getX()-lastPosX) / (cellSize*(int)scrollAmount);
+        int mousePosY = (int) (event.getY()-lastPosY) / (cellSize*(int)scrollAmount);
+        if (!(mousePosX < 0 || mousePosX > columns - 1 || mousePosY < 0 || mousePosY > rows - 1)) {
+            currentMousePosState = !currentGen.isAlive(mousePosX, mousePosY);
+            if (currentMousePosState)
+                currentGen.addCell(mousePosX,mousePosY);
+            else
+                currentGen.removeCell(mousePosX,mousePosY);
+
             drawCell(mousePosX, mousePosY);
         }
     }
@@ -115,12 +195,37 @@ public class Controller {
      */
     @FXML
     private void mouseDrag(MouseEvent event) {
-        int mousePosX = (int) event.getX() / 10;
-        int mousePosY = (int) event.getY() / 10;
-        if (!(mousePosX < 0 || mousePosX > theCanvas.getWidth() / 10 - 1 || mousePosY < 0 || mousePosY > theCanvas.getHeight() / 10 - 1)) {
-            currentGen.getCell(mousePosX, mousePosY).setState(currentMousePosState);
+        int mousePosX = (int) (event.getX()-lastPosX) / (cellSize*(int)scrollAmount);
+        int mousePosY = (int) (event.getY()-lastPosY) / (cellSize*(int)scrollAmount);
+        if (!(mousePosX < 0 || mousePosX > columns - 1 || mousePosY < 0 || mousePosY > rows - 1)) {
+            if (!currentGen.isAlive(mousePosX,mousePosY) && currentMousePosState)
+                currentGen.addCell(mousePosX,mousePosY);
+            if (currentGen.isAlive(mousePosX,mousePosY) && !currentMousePosState)
+                currentGen.removeCell(mousePosX,mousePosY);
             drawCell(mousePosX, mousePosY);
         }
+    }
+
+    @FXML
+    private void scrolling(ScrollEvent event) {
+        double posX = -((event.getX()-lastPosX)/(cellSize*scrollAmount))*cellSize;
+        double posY = -((event.getY()-lastPosY)/(cellSize*scrollAmount))*cellSize;
+        scrollAmount += event.getDeltaY()/40;
+        if (scrollAmount <= 1){
+            System.out.println("called");
+            scrollAmount = 1.0;
+            posX=0;
+            posY=0;
+        }
+        lastPosX = -posX;
+        lastPosY = -posY;
+        System.out.println(posX+" "+posY+" "+scrollAmount);
+        affine.setTx(posX);
+        affine.setTy(posY);
+        gc.setTransform(affine);
+        gc.scale(scrollAmount,scrollAmount);
+        initGrid();
+        draw();
     }
 
     @FXML
@@ -166,42 +271,6 @@ public class Controller {
         rules.setVisible(false);
     }
 
-//    @FXML
-//    private void setRules() {
-//        int[] tempAlive = new int[8];
-//        int aliveCount = 0;
-//        int[] tempDead = new int[8];
-//        int deadCount = 0;
-//        for (int row = 1; row <= 2; row++) {
-//            for (int col = 1; col <= 9; col++) {
-//                ObservableList<Node> children = rules.getChildren();
-//                for (Node child : children) {
-//                    if ((rules.getRowIndex(child) == null) || (rules.getColumnIndex(child) == null)) {
-//                    } else if ((rules.getRowIndex(child) == row) && (rules.getColumnIndex(child) == col)) {
-//                        CheckBox checkBox = (CheckBox) child;
-//                        if (row == 1) {
-//                            if (checkBox.isSelected()) {
-//                                tempAlive[aliveCount] = Math.max(0, col - 1);
-//                                aliveCount++;
-//                            }
-//
-//                        } else {
-//                            if (checkBox.isSelected()) {
-//                                tempDead[deadCount] = Math.max(0, col - 1);
-//                                deadCount++;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        alive = new int[aliveCount];
-//        dead = new int[deadCount];
-//        arrayToArray(alive, tempAlive);
-//        arrayToArray(dead, tempDead);
-//
-//        rules.setVisible(false);
-//    }
 
     public int[] arrayToArray(int[] finalArray, int[] containsValues) {
         for (int i = 0; i < finalArray.length; i++) {
@@ -221,7 +290,7 @@ public class Controller {
      */
     @FXML
     private void reset() {
-        currentGen.reset();
+        currentGen.reset(columns,rows);
         initGrid();
     }
 
@@ -267,9 +336,13 @@ public class Controller {
                 byte fileContent[] = new byte[(int) file.length()];
                 fin.read(fileContent);
                 String s = new String(fileContent);
-                RLE rle = new RLE(s, currentGen);
-                rle.codeToCells();
-                draw();
+                RLE rle = new RLE(s, currentGen, columns, rows);
+                try {
+                    rle.codeToCells();
+                    draw();
+                }catch (StackOverflowError error){
+                    System.out.println("Code was too big");
+                }
             } catch (FileNotFoundException e) {
                 System.out.println("File not found" + e);
             } catch (IOException ioe) {
@@ -325,7 +398,7 @@ public class Controller {
      * Reads the cells and moves them to a desired direction and desired distance.
      */
     public void move() {
-        PatternMover mover = new PatternMover(currentGen, direction);
+        PatternMover mover = new PatternMover(currentGen, direction, rows, columns);
         mover.setMode(safe);
         mover.setMoveDistance(moveValue);
         mover.updateCells();
@@ -338,11 +411,10 @@ public class Controller {
      * Iterates the next generation
      */
     public void update() {
-        CellGrid nextGen = new CellGrid(currentGen.getWidth(), currentGen.getHeight());
-        for (int y = 0; y < currentGen.getHeight(); y++) {
-            for (int x = 0; x < currentGen.getWidth(); x++) {
-                Cell cell = currentGen.getCell(x, y);
-                cell.updateByRules(x, y, currentGen, nextGen, alive,dead);
+        CellGrid nextGen = new CellGrid(columns,rows);
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < columns; x++) {
+                currentGen.nextGen(x,y,nextGen,alive,dead);
             }
         }
         currentGen = nextGen;
@@ -352,8 +424,8 @@ public class Controller {
      * Draws cells from the desired CellGrid
      */
     public void draw() {
-        for (int y = 0; y < currentGen.getHeight(); y++) {
-            for (int x = 0; x < currentGen.getWidth(); x++) {
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < columns; x++) {
                 drawCell(x, y);
             }
         }
@@ -363,13 +435,13 @@ public class Controller {
      * Draws one cell from it's position and state
      */
     private void drawCell(int x, int y) {
-        Cell cell = currentGen.getCell(x, y);
-        if (cell.isAlive()) {
+        if (currentGen.isAlive(x,y)) {
             gc.setFill(aliveCellColor);
         } else {
             gc.setFill(deadCellColor);
         }
-        gc.fillRect(x * 10 + 1, y * 10 + 1, 8, 8);
+        gc.fillRect(x * cellSize + 1, y * cellSize + 1, cellSize-2, cellSize-2);
+        //System.out.println(currentGen.toString());
     }
 
     /**
@@ -381,12 +453,12 @@ public class Controller {
         gc.fillRect(0, 0, theCanvas.getWidth(), theCanvas.getHeight());
         gc.setStroke(gridColor);
         gc.setLineWidth(2.0);
-        for (int x = 0; x < theCanvas.getWidth(); x += 10) {
+        for (int x = 0; x < theCanvas.getWidth(); x += cellSize) {
             gc.strokeLine(x, 0.0, x, theCanvas.getHeight());
             gc.stroke();
 
         }
-        for (int y = 0; y < theCanvas.getHeight(); y += 10) {
+        for (int y = 0; y < theCanvas.getHeight(); y += cellSize) {
             gc.strokeLine(0.0, y, theCanvas.getWidth(), y);
             gc.stroke();
         }

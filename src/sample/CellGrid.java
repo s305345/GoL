@@ -1,71 +1,102 @@
 package sample;
 
-/**
- * The CellGrid class is where cell information is stored (in 2D arrays).
- */
+import java.util.ArrayList;
+import java.util.stream.IntStream;
+
 public class CellGrid {
-    private Cell cells[][];
+    private ArrayList<ArrayList<Boolean>> cells;
 
-    /**
-     * CellGrid constructor that initializes a 2D array with new cells of the desired height and width
-     *
-     * @param w is the width of the 2D array
-     * @param h is the height of the 2D array
-     */
     public CellGrid(int w, int h) {
-        cells = new Cell[h][w];
-        for (int y = 0; y < getHeight(); y++) {
-            for (int x = 0; x < getWidth(); x++) {
-                replace(x, y, new Cell(false));
+        cells = new ArrayList<>();
+        for (int i = 0; i < w; i++){
+            cells.add(i,new ArrayList<>());
+            for (int j = 0; j < h; j++){
+                cells.get(i).add(j,false);
             }
         }
     }
 
-    /**
-     * Replaces a cell with another cell
-     * @param x is the desired horizontal placement of a cell in a CellGrid
-     * @param y is the desired vertical placement of a cell in a CellGrid
-     * @param cell is the cell you wish to store in the CellGrid
-     */
-    public void replace(int x, int y, Cell cell) {
-        cells[y][x] = cell;
-    }
-
-    /**
-     * Method to get board width
-     * @return board width
-     */
-    public int getWidth() {
-        return cells[0].length;
-    }
-
-    /**
-     * Method to get board height
-     * @return board height
-     */
-    public int getHeight() {
-        return cells.length;
-    }
-
-    /**
-     * Method to get one specific cell out of the cellGrid
-     * @return the desired cell
-     */
-    public Cell getCell(int x, int y) {
-        if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) {
-            return null;
-        }
-        return cells[y][x];
-    }
-
-    /**
-     * Sets all cells to false
-     */
-    public void reset() {
-        for (int y = 0; y < getHeight(); y++) {
-            for (int x = 0; x < getWidth(); x++) {
-                getCell(x, y).setState(false);
+    public void reset(int w, int h) {
+        cells = new ArrayList<>();
+        for (int i = 0; i < w; i++){
+            cells.add(i,new ArrayList<>());
+            for (int j = 0; j < h; j++){
+                cells.get(i).add(j,false);
             }
         }
     }
+
+    public void addCell(int x, int y) {
+        cells.get(x).set(y, true);
+    }
+
+    public void removeCell(int x, int y){
+        cells.get(x).set(y,false);
+    }
+
+    public boolean isAlive(int x, int y){
+        try {
+            return cells.get(x).get(y);
+        }catch (IndexOutOfBoundsException oob){
+            return false;
+        }
+    }
+
+    public int isAlive(boolean isAlive){
+        if (isAlive)
+            return 1;
+        else
+            return 0;
+    }
+
+    public int getNeighbours(int x, int y){
+        int count = 0;
+
+        count += isAlive(isAlive(x-1,y-1));
+        count += isAlive(isAlive(x, y - 1));
+        count += isAlive(isAlive(x + 1, y - 1));
+
+        count += isAlive(isAlive(x - 1, y));
+        count += isAlive(isAlive(x + 1, y));
+
+        count += isAlive(isAlive(x - 1, y + 1));
+        count += isAlive(isAlive(x, y + 1));
+        count += isAlive(isAlive(x + 1, y + 1));
+
+        return count;
+    }
+
+    public void setState(boolean state, int x, int y){
+        if (!isAlive(x,y) && state)
+            addCell(x,y);
+        if (isAlive(x,y) && !state)
+            removeCell(x,y);
+    }
+
+    public void nextGen(int x, int y, CellGrid nextGen, int[] alive, int[] dead){
+        if (isAlive(x,y) && IntStream.of(alive).anyMatch(i -> i == getNeighbours(x,y))) {
+            nextGen.addCell(x,y);
+        }
+        else if (!isAlive(x,y) && IntStream.of(dead).anyMatch(i -> i == getNeighbours(x,y))){
+            nextGen.addCell(x,y);
+        }
+    }
+
+    public void editSize(int w, int h){
+        int x = cells.size();
+        int y = cells.get(0).size();
+        for (int i = 0; i < w; i++){
+            if (i >= x)
+                cells.add(new ArrayList<>());
+            for (int j = 0; j < h; j++){
+                if (i < x){
+                    if (j >= y)
+                        cells.get(i).add(false);
+                }else
+                    cells.get(i).add(false);
+
+            }
+        }
+    }
+
 }

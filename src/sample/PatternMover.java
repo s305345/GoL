@@ -4,8 +4,10 @@ package sample;
  * Created by Lise Estelle on 12.04.2016.
  */
 public class PatternMover {
+    private CellGrid cells;
     private CellGrid beforeCells;
-    private CellGrid afterCells;
+    int rows;
+    int columns;
     private String direction;
     int x;
     int y;
@@ -13,14 +15,16 @@ public class PatternMover {
     boolean safeMode;
     int moveDistance;
 
-    public PatternMover(CellGrid beforeCells, String direction) {
-        this.beforeCells = beforeCells;
+    public PatternMover(CellGrid cells, String direction, int rows, int columns) {
+        this.cells = new CellGrid(columns,rows);
         this.direction = direction;
-        this.afterCells = new CellGrid(this.beforeCells.getWidth(), this.beforeCells.getHeight());
         this.x = 0;
         this.y = 0;
         this.outOfBound = false;
         this.moveDistance = 5;
+        this.rows = rows;
+        this.columns = columns;
+        this.beforeCells = cells;
     }
 
     public void setMode(boolean desiredMode) {
@@ -50,34 +54,33 @@ public class PatternMover {
 
     }
 
-    public CellGrid updateCells() {
+    public void updateCells() {
         movePattern();
         if (!outOfBound || (outOfBound && !safeMode)) {
-            for (int i = 0; i < beforeCells.getHeight(); i++) {
-                for (int j = 0; j < beforeCells.getWidth(); j++) {
-                    if (afterCells.getCell(j, i).isAlive()) {
-                        beforeCells.getCell(j, i).setState(true);
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < columns; j++) {
+                    if (cells.isAlive(j,i)) {
+                        beforeCells.setState(true,j,i);
                     } else {
-                        beforeCells.getCell(j, i).setState(false);
+                        beforeCells.setState(false,j,i);
                     }
                 }
             }
         }
-        return beforeCells;
     }
 
     public void movePattern() {
         setMovement();
-        for (int i = 0; i < beforeCells.getHeight(); i++) {
-            for (int j = 0; j < beforeCells.getWidth(); j++) {
-                if (beforeCells.getCell(j, i).isAlive()) {
-                    if ((j + x < 0 || j + x >= beforeCells.getWidth() || i + y < 0 || i + y >= beforeCells.getHeight())) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if (beforeCells.isAlive(j,i)) {
+                    //System.out.println("hi hi");
+                    if ((j + x < 0 || j + x >= columns || i + y < 0 || i + y >= rows)) {
                         outOfBound = true;
                     } else {
-                        afterCells.getCell(j + x, i + y).setState(true);
+                        cells.addCell(j+x,i+y);
                     }
                 }
-
             }
         }
     }
