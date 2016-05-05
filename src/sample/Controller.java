@@ -98,6 +98,10 @@ public class Controller {
         return theController;
     }
 
+    /**
+     * Calls to initialize the Controller after its root element has been completely processed.
+     * Also makes it possible to use addListeners to call evnet handler and manipulate property.
+     */
     public void initialize() {
 
         rows = (int)theCanvas.getHeight()/cellSize;
@@ -113,7 +117,12 @@ public class Controller {
         gameLoop = new GameLoop();
         gc = theCanvas.getGraphicsContext2D();
 
-
+        /**
+         * addListener method makes it possible to add event handlers and event handlers are called to change the value of a property changes.
+         * A change listener, which is called whenever the value of the property has been recalculated.
+         * The change listener is passed three arguments: the property whose value has changed, the previous value of the property, and the new value.
+         * In our code we use addListeners for Speed(Slider), MoveDistance(Slider), CellSize(zoom of Cells in static with Slider), Resizing of Canvas and generating Cells for resizing)
+         */
         speed.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -206,6 +215,9 @@ public class Controller {
         }
     }
 
+    /**
+     * this is basically just for zooming in/out using mouse scroll.
+     */
     @FXML
     private void scrolling(ScrollEvent event) {
         double posX = -((event.getX()-lastPosX)/(cellSize*scrollAmount))*cellSize;
@@ -228,11 +240,19 @@ public class Controller {
         draw();
     }
 
+    /**
+     * Activates Rules for the game.(customized by user)
+     */
     @FXML
     private void activateRulesWindow() {
         rules.setVisible(true);
     }
 
+    /**
+     * changes the rules for the game according to users desire.
+     * see http://en.wikipedia.org/wiki/Conway's_Game_of_Life (especially Rules)
+     * for a description of how to calculate the next generation.
+     */
     @FXML
     private void setRules() {
         int[] tempAlive = new int[8];
@@ -286,7 +306,9 @@ public class Controller {
     }
 
     /**
-     * Set's all cells to false and draws a clean canvas
+     * Sets all cells to false and draws a clean canvas.
+     * By a clean Canvas we mean a canvas with cells and deadCell colour.
+     * In this position, user can chose rules or generate alive cells by using the mouse and play.
      */
     @FXML
     private void reset() {
@@ -308,7 +330,9 @@ public class Controller {
     }
 
     /**
-     * Updates the cellgrid array and draws them on the canvas
+     * Updates the cellgrid array and draws them on the canvas.
+     * when the user clicks, this will cause the next generation to be
+     * created and displayed.
      */
     @FXML
     private void nextFrame() {
@@ -317,6 +341,7 @@ public class Controller {
     }
 
     /**
+     * Gives the ability to the user to choose a desired predifined Pattern for the game.
      * Opens a file chooser and when a file has been chosen, reads the file, updates the cells, draws them on the canvas.
      */
     @FXML
@@ -361,8 +386,9 @@ public class Controller {
     }
 
     /**
+     * Gives some movement options(left, up, right and down) to the game and it is adjustable from 1 to 10.
      * Up, down, left and right are triggered when the user clicks on the related buttons.
-     * Moves the canvas content to the desired direction
+     * Moves the canvas content(columns and rows of Cells) to the desired direction.
      */
     @FXML
     public void up() {
@@ -396,6 +422,7 @@ public class Controller {
 
     /**
      * Reads the cells and moves them to a desired direction and desired distance.
+     * Enables movement for moveDistance in Canvas.
      */
     public void move() {
         PatternMover mover = new PatternMover(currentGen, direction, rows, columns);
@@ -408,7 +435,8 @@ public class Controller {
 
 
     /**
-     * Iterates the next generation
+     * Iterates the next generation.
+     * Updating and bringing up the alive cells and dead cells accoriding to the game rules.
      */
     public void update() {
         CellGrid nextGen = new CellGrid(columns,rows);
@@ -421,7 +449,8 @@ public class Controller {
     }
 
     /**
-     * Draws cells from the desired CellGrid
+     * Draws cells from the desired CellGrid.
+     * Cells are defined in columns and rows.
      */
     public void draw() {
         for (int y = 0; y < rows; y++) {
@@ -445,8 +474,8 @@ public class Controller {
     }
 
     /**
-     * Draws a clean canvas without taking in account cell states
-     * If you use this you should make sure all cells in CellGrid are set to "false"
+     * Draws a clean canvas without taking in account cell states(dead or alive).
+     * If you use this you should make sure all cells in CellGrid are set to "false".
      */
     private void initGrid() { // Draws a grid line for line
         gc.setFill(deadCellColor);
