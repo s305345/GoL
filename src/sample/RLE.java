@@ -4,7 +4,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by Lise Estelle on 11.04.2016.
+ * RLE works by reducing the physical size of a repeating string of characters.
+ * This repeating string, called a run, is typically encoded into two bytes.
+ * The first byte represents the number of characters in the run and is called the run count and
+ * The second byte is the value of the character in the run, which is in the range of 0 to 255, and is called the run value.
+ * For more information about RLE format visit http://www.conwaylife.com/wiki/Run_Length_Encoded .
  */
 public class RLE {
     private String rle;
