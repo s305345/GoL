@@ -1,7 +1,5 @@
 package sample;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -15,8 +13,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.input.ZoomEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -100,7 +96,7 @@ public class Controller {
 
     /**
      * Calls to initialize the Controller after its root element has been completely processed.
-     * Also makes it possible to use addListeners to call evnet handler and manipulate property.
+     * Also makes it possible to use addListeners to call event handler and manipulate property.
      */
     public void initialize() {
 
@@ -180,7 +176,6 @@ public class Controller {
 
     /**
      * On mouse click, sets mouse state to true or false depending what is clicked
-     *
      * @param event is triggered when the mouse is clicked
      */
     @FXML
@@ -220,24 +215,25 @@ public class Controller {
      */
     @FXML
     private void scrolling(ScrollEvent event) {
-        double posX = -((event.getX()-lastPosX)/(cellSize*scrollAmount))*cellSize;
-        double posY = -((event.getY()-lastPosY)/(cellSize*scrollAmount))*cellSize;
-        scrollAmount += event.getDeltaY()/40;
-        if (scrollAmount <= 1){
-            System.out.println("called");
-            scrollAmount = 1.0;
-            posX=0;
-            posY=0;
-        }
-        lastPosX = -posX;
-        lastPosY = -posY;
-        System.out.println(posX+" "+posY+" "+scrollAmount);
-        affine.setTx(posX);
-        affine.setTy(posY);
-        gc.setTransform(affine);
-        gc.scale(scrollAmount,scrollAmount);
-        initGrid();
-        draw();
+//        double posX = -((event.getX()-lastPosX)/(cellSize*scrollAmount))*cellSize;
+//        double posY = -((event.getY()-lastPosY)/(cellSize*scrollAmount))*cellSize;
+//        scrollAmount += event.getDeltaY()/40;
+//        if (scrollAmount <= 1){
+//            System.out.println("called");
+//            scrollAmount = 1.0;
+//            posX=0;
+//            posY=0;
+//        }
+//        lastPosX = -posX;
+//        lastPosY = -posY;
+//        System.out.println(posX+" "+posY+" "+scrollAmount);
+//        affine.setTx(posX);
+//        affine.setTy(posY);
+//        gc.setTransform(affine);
+//        gc.scale(scrollAmount,scrollAmount);
+//        initGrid();
+//        draw();
+
     }
 
     /**
@@ -308,7 +304,6 @@ public class Controller {
     /**
      * Sets all cells to false and draws a clean canvas.
      * By a clean Canvas we mean a canvas with cells and deadCell colour.
-     * In this position, user can chose rules or generate alive cells by using the mouse and play.
      */
     @FXML
     private void reset() {
@@ -330,7 +325,7 @@ public class Controller {
     }
 
     /**
-     * Updates the cellgrid array and draws them on the canvas.
+     * Updates the cellGrid array and draws them on the canvas.
      * when the user clicks, this will cause the next generation to be
      * created and displayed.
      */
@@ -341,7 +336,7 @@ public class Controller {
     }
 
     /**
-     * Gives the ability to the user to choose a desired predifined Pattern for the game.
+     * Gives the ability to the user to choose a desired predefined Pattern for the game.
      * Opens a file chooser and when a file has been chosen, reads the file, updates the cells, draws them on the canvas.
      */
     @FXML
@@ -436,7 +431,7 @@ public class Controller {
 
     /**
      * Iterates the next generation.
-     * Updating and bringing up the alive cells and dead cells accoriding to the game rules.
+     * Updating and bringing up the alive cells and dead cells according to the game rules.
      */
     public void update() {
         CellGrid nextGen = new CellGrid(columns,rows);
