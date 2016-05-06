@@ -15,6 +15,14 @@ public class PatternMover {
     boolean safeMode;
     int moveDistance;
 
+    /**
+     * Constructs and initialises all variables.
+     *
+     * @param cells     constructs a new cell object
+     * @param direction saves direction, then later it's used to either move a pattern in the direction the user wants.
+     * @param rows      adding rows
+     * @param columns   adding colums.
+     */
     public PatternMover(CellGrid cells, String direction, int rows, int columns) {
         this.cells = new CellGrid(columns,rows);
         this.direction = direction;
@@ -27,14 +35,27 @@ public class PatternMover {
         this.beforeCells = cells;
     }
 
+    /**
+     * Information is collected, the information is gathered from the user
+     * input and its gets saved, and therefor can be used in other methods later.
+     * @param desiredMode is the required input
+     */
     public void setMode(boolean desiredMode) {
         this.safeMode = desiredMode;
     }
 
+    /**
+     * Gathers information from user input, saved and therefore can be used in other methods later.
+     * @param desiredDistance is the required input.
+     */
     public void setMoveDistance(int desiredDistance) {
         this.moveDistance = desiredDistance;
     }
 
+    /**
+     * Gathers information from user input, saved and therefor can be used in other methods
+     * saves information about movement of uploaded pattern.
+     */
     public void setMovement() {
         if (direction == "up") {
             y = -moveDistance;
@@ -54,6 +75,10 @@ public class PatternMover {
 
     }
 
+    /**
+     * Iterates the next generation.
+     * checks previous methods and uses this to create a updated
+     */
     public void updateCells() {
         movePattern();
         if (!outOfBound || (outOfBound && !safeMode)) {
@@ -69,6 +94,10 @@ public class PatternMover {
         }
     }
 
+    /**
+     * moves pattern to desired location after collecting
+     * information from user input.
+     */
     public void movePattern() {
         setMovement();
         for (int i = 0; i < rows; i++) {
