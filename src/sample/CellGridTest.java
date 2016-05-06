@@ -1,22 +1,30 @@
-/*package sample;
+package sample;
+
+/**
+ * Created by rahmanshahidi on 06/05/16.
+ */
+
+import javafx.scene.control.Cell;
+import org.junit.Before;
+
 
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
-/**
- * Created by Prabdeep on 18.04.2016.
- */
-/*public class CellGridTest {
+
+public class CellGridTest {
     CellGrid cellGrid;
 
     @Before
     public void setUp() {
         cellGrid = new CellGrid(4, 4);
-        cellGrid.getCell(1, 1).setState(true);
-        cellGrid.getCell(2, 2).setState(true);
-        cellGrid.getCell(3, 3).setState(true);
+        cellGrid.setState(true, 1 ,1);
+        cellGrid.setState(true, 2, 2);
+        cellGrid.setState(true, 3, 3);
 
     }
 
@@ -29,7 +37,7 @@ import static org.junit.Assert.*;
 
     @Test
     public void testGetHeight() {
-        int expectedHeight = 3;
+        int expectedHeight = 4;
         cellGrid.getHeight();
         assertEquals(expectedHeight, cellGrid.getHeight());
     }
@@ -37,13 +45,13 @@ import static org.junit.Assert.*;
     @Test
     public void testReset() {
         CellGrid expectedReset = new CellGrid(4, 4);
-        cellGrid.reset();
+        cellGrid.reset(cellGrid.getWidth(), cellGrid.getHeight());
 
         for (int i = 0; i < cellGrid.getWidth(); i++) {
             for (int j = 0; j < cellGrid.getHeight(); j++) {
-                assertEquals(expectedReset.getCell(i, j).isAlive(), cellGrid.getCell(i, j).isAlive());
+                assertEquals(expectedReset.isAlive(i, j), cellGrid.isAlive(i, j));
             }
         }
     }
 }
-*/
+

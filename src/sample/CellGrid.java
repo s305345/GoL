@@ -72,6 +72,13 @@ public class CellGrid {
         if (isAlive(x,y) && !state)
             removeCell(x,y);
     }
+    public int getHeight(){
+        return cells.get(0).size();
+    }
+
+    public int getWidth(){
+        return cells.size();
+    }
 
     public void nextGen(int x, int y, CellGrid nextGen, int[] alive, int[] dead){
         if (isAlive(x,y) && IntStream.of(alive).anyMatch(i -> i == getNeighbours(x,y))) {

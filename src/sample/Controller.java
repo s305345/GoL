@@ -215,24 +215,24 @@ public class Controller {
      */
     @FXML
     private void scrolling(ScrollEvent event) {
-//        double posX = -((event.getX()-lastPosX)/(cellSize*scrollAmount))*cellSize;
-//        double posY = -((event.getY()-lastPosY)/(cellSize*scrollAmount))*cellSize;
-//        scrollAmount += event.getDeltaY()/40;
-//        if (scrollAmount <= 1){
-//            System.out.println("called");
-//            scrollAmount = 1.0;
-//            posX=0;
-//            posY=0;
-//        }
-//        lastPosX = -posX;
-//        lastPosY = -posY;
-//        System.out.println(posX+" "+posY+" "+scrollAmount);
-//        affine.setTx(posX);
-//        affine.setTy(posY);
-//        gc.setTransform(affine);
-//        gc.scale(scrollAmount,scrollAmount);
-//        initGrid();
-//        draw();
+        double posX = -((event.getX()-lastPosX)/(cellSize*scrollAmount))*cellSize;
+        double posY = -((event.getY()-lastPosY)/(cellSize*scrollAmount))*cellSize;
+        scrollAmount += event.getDeltaY()/40;
+        if (scrollAmount <= 1){
+            System.out.println("called");
+            scrollAmount = 1.0;
+            posX=0;
+            posY=0;
+        }
+        lastPosX = -posX;
+        lastPosY = -posY;
+        System.out.println(posX+" "+posY+" "+scrollAmount);
+        affine.setTx(posX);
+        affine.setTy(posY);
+        gc.setTransform(affine);
+        gc.scale(scrollAmount,scrollAmount);
+        initGrid();
+        draw();
 
     }
 
