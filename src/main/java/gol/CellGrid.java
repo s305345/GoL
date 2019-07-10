@@ -1,4 +1,4 @@
-package sample;
+package gol;
 
 import java.util.ArrayList;
 import java.util.stream.IntStream;

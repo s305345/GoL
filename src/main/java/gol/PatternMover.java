@@ -1,4 +1,4 @@
-package sample;
+package gol;
 
 /**
  * Created by Lise Estelle on 12.04.2016.

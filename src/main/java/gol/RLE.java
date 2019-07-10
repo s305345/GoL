@@ -1,4 +1,4 @@
-package sample;
+package gol;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

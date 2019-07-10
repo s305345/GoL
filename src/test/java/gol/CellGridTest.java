@@ -1,17 +1,11 @@
-package sample;
+package gol;
 
 /**
  * Created by rahmanshahidi on 06/05/16.
  */
 
-import javafx.scene.control.Cell;
-import org.junit.Before;
-
-
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 

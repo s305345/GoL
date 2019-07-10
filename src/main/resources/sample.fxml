@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Text?>
 
 <AnchorPane minHeight="300.0" prefHeight="692.0" prefWidth="243.0" xmlns="http://javafx.com/javafx/8.0.65"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="gol.Controller">
     <BorderPane fx:id="window" minHeight="300.0" prefHeight="692.0" prefWidth="865.0" style="-fx-background-color: #000;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <top>
             <MenuBar fx:id="top" minWidth="350.0" prefHeight="25.0" prefWidth="944.0" BorderPane.alignment="TOP_LEFT">

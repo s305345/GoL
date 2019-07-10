@@ -1,4 +1,4 @@
-package sample;
+package gol;
 
 import javafx.animation.AnimationTimer;
 
